@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>دليل الحرفين - منصة الحرفيين الموثوقين</title>
+    <title>دليل الحرفيين - منصة الحرفيين الموثوقين</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -330,14 +330,53 @@
             position: relative;
         }
 
-        .input-group i {
+        .input-group i:not(.toggle-password) {
             position: absolute;
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
             color: #95a5a6;
         }
-
+        
+        /* تنسيق خاص لحقل كلمة المرور مع أيقونة العين */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+        
+        .password-wrapper input {
+            width: 100%;
+            padding: 12px 40px 12px 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            background: #fafafa;
+        }
+        
+        .password-wrapper input:focus {
+            outline: none;
+            border-color: #3498db;
+            background: white;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #95a5a6;
+            z-index: 2;
+            background: transparent;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        
+        .toggle-password:hover {
+            color: #3498db;
+        }
+        
         .input-group input, .input-group select, .input-group textarea {
             width: 100%;
             padding: 12px 40px 12px 12px;
@@ -694,6 +733,30 @@
             background: white;
             cursor: pointer;
         }
+        
+        /* تنسيق خانة تذكرني */
+        .remember-me {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            margin: 0.8rem 0 1.2rem;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .remember-me input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .remember-me label {
+            color: #2c3e50;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
 
         @media (max-width: 768px) {
             .profile-header { flex-direction: column; text-align: center; }
@@ -707,7 +770,7 @@
 <body>
 
 <div class="navbar">
-    <div class="logo" onclick="goToHome()"><i class="fas fa-tools"></i> دليل الحرفين</div>
+    <div class="logo" onclick="goToHome()"><i class="fas fa-tools"></i> دليل الحرفيين</div>
     <div style="display: flex; align-items: center;">
         <div class="notification-bell" id="notificationBell" style="display: none;">
             <i class="fas fa-bell"></i>
@@ -895,7 +958,25 @@
         }, 60000);
     }
 
-    async function loginUser(username, password) {
+    // دوال لحفظ واسترجاع الجلسة (تذكرني)
+    function saveSession(username, password) {
+        localStorage.setItem('rememberedUser', username);
+        localStorage.setItem('rememberedPass', password);
+    }
+    
+    function clearSession() {
+        localStorage.removeItem('rememberedUser');
+        localStorage.removeItem('rememberedPass');
+    }
+    
+    function getSavedSession() {
+        return {
+            username: localStorage.getItem('rememberedUser'),
+            password: localStorage.getItem('rememberedPass')
+        };
+    }
+
+    async function loginUser(username, password, rememberMe = false) {
         const usersRef = db.ref('users');
         const snapshot = await usersRef.orderByChild('username').equalTo(username).once('value');
         
@@ -908,6 +989,14 @@
             if (userData && userData.password === password) {
                 currentUser = { username: username, ...userData };
                 currentUserType = currentUser.type;
+                
+                // حفظ الجلسة إذا تم اختيار تذكرني
+                if (rememberMe) {
+                    saveSession(username, password);
+                } else {
+                    clearSession();
+                }
+                
                 updateUI();
                 renderPage();
                 startNotifications();
@@ -944,7 +1033,7 @@
             ratingCount: 0,
             avgRating: 0,
             comments: [],
-            bio: type === 'craftsman' ? 'حرفي محترف جاهز لخدمتك' : 'عميل جديد في دليل الحرفين',
+            bio: type === 'craftsman' ? 'حرفي محترف جاهز لخدمتك' : 'عميل جديد في دليل الحرفيين',
             createdAt: new Date().toISOString(),
             governorate: governorate,
             center: center
@@ -1032,27 +1121,56 @@
         const governorateOptions = Object.keys(egyptGovernorates).map(g => `<option value="${g}">${g}</option>`).join('');
         
         if (type === 'login') {
+            const savedSession = getSavedSession();
+            const rememberedUsername = savedSession.username || '';
+            const rememberedPassword = savedSession.password || '';
+            const isChecked = !!(rememberedUsername && rememberedPassword);
+            
             const container = document.getElementById('authForm');
             container.innerHTML = `
-                <div class="input-group"><i class="fas fa-user"></i><input type="text" id="loginUsername" placeholder="اسم المستخدم"></div>
-                <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="كلمة السر"></div>
+                <div class="input-group"><i class="fas fa-user"></i><input type="text" id="loginUsername" placeholder="اسم المستخدم" value="${rememberedUsername}"></div>
+                <div class="input-group">
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPassword" placeholder="كلمة السر" value="${rememberedPassword}">
+                        <i class="fas fa-eye toggle-password" id="toggleLoginPassword"></i>
+                    </div>
+                </div>
+                <div class="remember-me" id="rememberMeDiv">
+                    <input type="checkbox" id="rememberMeCheckbox" ${isChecked ? 'checked' : ''}>
+                    <label for="rememberMeCheckbox">تذكرني</label>
+                </div>
                 <button id="doLoginBtn" style="width: 100%;">دخول</button>
                 <hr style="margin: 15px 0;">
                 <p style="text-align: center;">ليس لديك حساب؟ <a href="#" id="switchToReg" style="color: #3498db;">سجل الآن</a></p>
             `;
+            
+            // إضافة وظيفة إظهار/إخفاء كلمة المرور
+            const togglePassword = document.getElementById('toggleLoginPassword');
+            const passwordInput = document.getElementById('loginPassword');
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+            });
+            
             document.getElementById('doLoginBtn').onclick = async () => {
                 const username = document.getElementById('loginUsername').value.trim();
                 const password = document.getElementById('loginPassword').value;
+                const rememberMe = document.getElementById('rememberMeCheckbox').checked;
                 if (!username || !password) { showMessage('يرجى إدخال اسم المستخدم وكلمة السر', true); return; }
-                await loginUser(username, password);
+                await loginUser(username, password, rememberMe);
             };
             document.getElementById('switchToReg').onclick = (e) => { e.preventDefault(); renderAuthForm('register'); };
         } else {
-            const countryOptions = countryCodes.map(c => `<option value="${c.code}">${c.country} ${c.code}</option>`).join('');
             const container = document.getElementById('authForm');
             container.innerHTML = `
                 <div class="input-group"><i class="fas fa-user"></i><input type="text" id="regUsername" placeholder="اسم المستخدم"></div>
-                <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="regPassword" placeholder="كلمة السر"></div>
+                <div class="input-group">
+                    <div class="password-wrapper">
+                        <input type="password" id="regPassword" placeholder="كلمة السر">
+                        <i class="fas fa-eye toggle-password" id="toggleRegPassword"></i>
+                    </div>
+                </div>
                 <div class="input-group"><i class="fas fa-user-tag"></i><select id="regType"><option value="client">📋 عميل</option><option value="craftsman">🔧 صاحب مهنة</option></select></div>
                 
                 <div class="location-group">
@@ -1070,7 +1188,7 @@
                     <div class="input-group"><i class="fas fa-briefcase"></i><input type="text" id="profession" placeholder="المهنة (مثال: سباك، كهربائي)"></div>
                     <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="phoneNumber" placeholder="رقم الهاتف للاتصال"></div>
                     <div class="whatsapp-wrapper">
-                        <select id="whatsappCode">${countryOptions}</select>
+                        <select id="whatsappCode">${countryCodes.map(c => `<option value="${c.code}">${c.country} ${c.code}</option>`).join('')}</select>
                         <input type="tel" id="whatsappNumber" placeholder="رقم الواتساب">
                     </div>
                 </div>
@@ -1078,6 +1196,15 @@
                 <hr style="margin: 15px 0;">
                 <p style="text-align: center;">لديك حساب بالفعل؟ <a href="#" id="switchToLogin" style="color: #3498db;">تسجيل الدخول</a></p>
             `;
+            
+            // إضافة وظيفة إظهار/إخفاء كلمة المرور في التسجيل
+            const toggleRegPassword = document.getElementById('toggleRegPassword');
+            const regPasswordInput = document.getElementById('regPassword');
+            toggleRegPassword.addEventListener('click', function() {
+                const type = regPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                regPasswordInput.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+            });
             
             document.getElementById('regGovernorate').addEventListener('change', () => {
                 updateCenterOptions('regGovernorate', 'regCenter');
@@ -1641,4 +1768,4 @@
     showAuthScreen();
 </script>
 </body>
-  </html>
+    </html>
