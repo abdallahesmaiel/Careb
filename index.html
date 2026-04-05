@@ -220,6 +220,7 @@
             justify-content: center;
             margin: 0 auto 15px;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .card-avatar img {
@@ -236,6 +237,11 @@
         .card h3 {
             color: #2c3e50;
             margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .card h3:hover {
+            color: #f39c12;
         }
 
         .rating {
@@ -325,6 +331,47 @@
             color: white;
         }
 
+        .request-client-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .request-client-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .request-client-avatar i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .request-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .client-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #2c3e50;
+        }
+
+        .client-name:hover {
+            color: #f39c12;
+        }
+
         .input-group {
             margin-bottom: 1.2rem;
             position: relative;
@@ -338,7 +385,6 @@
             color: #95a5a6;
         }
         
-        /* تنسيق خاص لحقل كلمة المرور مع أيقونة العين */
         .password-wrapper {
             position: relative;
             width: 100%;
@@ -734,7 +780,6 @@
             cursor: pointer;
         }
         
-        /* تنسيق خانة تذكرني */
         .remember-me {
             display: flex;
             align-items: center;
@@ -832,7 +877,6 @@
         { code: "+49", country: "🇩🇪 ألمانيا", name: "ألمانيا" }
     ];
 
-    // بيانات المحافظات والمراكز المصرية
     const egyptGovernorates = {
         "القاهرة": ["الزيتون", "الأميرية", "المطرية", "عين شمس", "مدينة نصر", "مصر الجديدة", "الوايلي", "باب الشعرية", "بولاق", "جاردن سيتي", "وسط البلد"],
         "الإسكندرية": ["المنتزه", "شرق", "وسط", "غرب", "الجمرك", "العجمي", "برج العرب", "الدخيلة", "مينا البصل"],
@@ -910,6 +954,89 @@
         }
     }
 
+    // عرض صفحة ملف العميل
+    window.viewClientProfile = async (clientId) => {
+        const snap = await db.ref('users/' + clientId).once('value');
+        const client = snap.val();
+        if (!client) {
+            showMessage('العميل غير موجود', true);
+            return;
+        }
+        
+        // جلب تعليقات العميل على الحرفيين الآخرين
+        const allUsersSnap = await db.ref('users').once('value');
+        const clientComments = [];
+        allUsersSnap.forEach(userSnap => {
+            const user = userSnap.val();
+            if (user.type === 'craftsman' && user.comments) {
+                user.comments.forEach(comment => {
+                    if (comment.username === clientId) {
+                        clientComments.push({
+                            craftsmanName: userSnap.key,
+                            rating: comment.rating,
+                            comment: comment.comment,
+                            date: comment.date,
+                            craftsmanProfession: user.profession
+                        });
+                    }
+                });
+            }
+        });
+        clientComments.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        document.getElementById('appContent').innerHTML = `
+            <div class="container">
+                <button class="back-button" onclick="renderPage()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
+                <div class="profile-info">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            ${client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                        </div>
+                        <div>
+                            <h2>${client.username}</h2>
+                            <p class="rating">
+                                ${client.type === 'client' ? '📋 عميل' : '🔧 حرفي'}
+                            </p>
+                            <div class="location-badge" style="margin-top: 8px;">
+                                <i class="fas fa-map-marker-alt"></i> ${client.center || 'غير محدد'} - ${client.governorate || 'غير محدد'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3><i class="fas fa-info-circle"></i> السيرة الذاتية</h3>
+                    <p style="margin-bottom: 1rem;">${client.bio || 'لا توجد سيرة ذاتية'}</p>
+                    
+                    ${client.type === 'craftsman' ? `
+                        <h3><i class="fas fa-briefcase"></i> معلومات المهنة</h3>
+                        <p><strong>المهنة:</strong> ${client.profession || 'غير محدد'}</p>
+                        <p><strong>الهاتف:</strong> ${client.phone || 'غير متاح'}</p>
+                        <p><strong>واتساب:</strong> ${client.whatsapp || 'غير متاح'}</p>
+                    ` : ''}
+                    
+                    <h3 style="margin-top: 1.5rem;"><i class="fas fa-star"></i> تقييم العميل (${client.ratingCount || 0})</h3>
+                    <p style="font-size: 1.5rem; color: #f39c12;">⭐ ${client.avgRating ? client.avgRating.toFixed(1) : 'لا يوجد تقييمات'}</p>
+                    
+                    <h3 style="margin-top: 1.5rem;"><i class="fas fa-comments"></i> تعليقات العميل على الحرفيين</h3>
+                    <div class="comments-container">
+                        ${clientComments.length === 0 ? '<p style="text-align: center; padding: 1rem;">لا توجد تعليقات من هذا العميل بعد</p>' : 
+                            clientComments.map(c => `
+                                <div class="comment-item">
+                                    <div class="comment-header">
+                                        <span class="comment-user"><i class="fas fa-tools"></i> الحرفي: ${c.craftsmanName} (${c.craftsmanProfession || ''})</span>
+                                        <span class="comment-rating">${'⭐'.repeat(c.rating)} (${c.rating})</span>
+                                        <span class="comment-date">${new Date(c.date).toLocaleDateString('ar')}</span>
+                                    </div>
+                                    <div class="comment-text">${c.comment || 'لا يوجد تعليق'}</div>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+        closeSidebar();
+    };
+
     async function cleanupOldRequests() {
         const now = Date.now();
         const fiveMinutes = 5 * 60 * 1000;
@@ -958,7 +1085,6 @@
         }, 60000);
     }
 
-    // دوال لحفظ واسترجاع الجلسة (تذكرني)
     function saveSession(username, password) {
         localStorage.setItem('rememberedUser', username);
         localStorage.setItem('rememberedPass', password);
@@ -990,7 +1116,6 @@
                 currentUser = { username: username, ...userData };
                 currentUserType = currentUser.type;
                 
-                // حفظ الجلسة إذا تم اختيار تذكرني
                 if (rememberMe) {
                     saveSession(username, password);
                 } else {
@@ -1144,7 +1269,6 @@
                 <p style="text-align: center;">ليس لديك حساب؟ <a href="#" id="switchToReg" style="color: #3498db;">سجل الآن</a></p>
             `;
             
-            // إضافة وظيفة إظهار/إخفاء كلمة المرور
             const togglePassword = document.getElementById('toggleLoginPassword');
             const passwordInput = document.getElementById('loginPassword');
             togglePassword.addEventListener('click', function() {
@@ -1197,7 +1321,6 @@
                 <p style="text-align: center;">لديك حساب بالفعل؟ <a href="#" id="switchToLogin" style="color: #3498db;">تسجيل الدخول</a></p>
             `;
             
-            // إضافة وظيفة إظهار/إخفاء كلمة المرور في التسجيل
             const toggleRegPassword = document.getElementById('toggleRegPassword');
             const regPasswordInput = document.getElementById('regPassword');
             toggleRegPassword.addEventListener('click', function() {
@@ -1430,7 +1553,6 @@
             </div>
         `;
         
-        // تعيين قيمة المركز الحالي
         if (currentUser.center) {
             setTimeout(() => {
                 updateCenterOptions('editGovernorate', 'editCenter', currentUser.center);
@@ -1580,14 +1702,109 @@
         
         const pending = requests.filter(r => r.status === 'pending');
         const accepted = requests.filter(r => r.status === 'accepted');
+        // المكتملة والمرفوضة تبقى في الإحصائيات ولكن تختفي من القائمة بعد 5 دقائق
         const completed = requests.filter(r => r.status === 'completed' && (now - (r.completedAt || 0) < fiveMinutes));
         const rejected = requests.filter(r => r.status === 'rejected' && (now - (r.rejectedAt || 0) < fiveMinutes));
         
         let html = '';
-        if (pending.length) html += '<h3 class="section-title" style="color: #e74c3c;">🆕 طلبات جديدة</h3>' + pending.map(r => `<div class="request-item"><p><strong>العميل: ${r.clientId}</strong></p><p>العنوان: ${r.address}</p><p>الهاتف: ${r.clientPhone} <button class="call-btn" onclick="window.location.href='tel:${r.clientPhone}'"><i class="fas fa-phone"></i> اتصل</button></p><div class="flex-buttons"><button id="accept_${r.id}" class="accept-btn"><i class="fas fa-check"></i> قبول الطلب</button><button id="reject_${r.id}" class="reject-btn"><i class="fas fa-times"></i> رفض الطلب</button></div></div>`).join('');
-        if (accepted.length) html += '<h3 class="section-title" style="color: #27ae60;">✅ طلبات قيد التنفيذ</h3>' + accepted.map(r => `<div class="request-item"><p><strong>العميل: ${r.clientId}</strong></p><p>العنوان: ${r.address}</p><button id="complete_${r.id}" style="background: #27ae60;"><i class="fas fa-check-double"></i> تم الانتهاء من الخدمة</button></div>`).join('');
-        if (completed.length) html += '<h3 class="section-title">📋 طلبات مكتملة (سيتم حذفها خلال 5 دقائق)</h3>' + completed.map(r => `<div class="request-item"><p><strong>العميل: ${r.clientId}</strong></p><p>✅ تم الإنجاز</p><div class="time-remaining">سيتم حذف الطلب تلقائياً بعد ${Math.ceil((fiveMinutes - (now - r.completedAt)) / 60000)} دقيقة</div></div>`).join('');
-        if (rejected.length) html += '<h3 class="section-title">❌ طلبات مرفوضة (سيتم حذفها خلال 5 دقائق)</h3>' + rejected.map(r => `<div class="request-item"><p><strong>العميل: ${r.clientId}</strong></p><p>❌ مرفوض</p>${r.rejectReason ? `<div class="rejected-reason"><i class="fas fa-comment"></i> سبب الرفض: ${r.rejectReason}</div>` : ''}<div class="time-remaining">سيتم حذف الطلب تلقائياً بعد ${Math.ceil((fiveMinutes - (now - r.rejectedAt)) / 60000)} دقيقة</div></div>`).join('');
+        
+        // الطلبات الجديدة - مع صورة العميل واسمه
+        if (pending.length) {
+            html += '<h3 class="section-title" style="color: #e74c3c;">🆕 طلبات جديدة</h3>';
+            for (let r of pending) {
+                const clientData = await db.ref('users/' + r.clientId).once('value');
+                const client = clientData.val();
+                html += `
+                    <div class="request-item">
+                        <div class="request-header">
+                            <div class="request-client-avatar" onclick="viewClientProfile('${r.clientId}')">
+                                ${client && client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            </div>
+                            <div>
+                                <span class="client-name" onclick="viewClientProfile('${r.clientId}')">${r.clientId}</span>
+                                ${client ? `<div class="location-badge" style="margin-top: 4px;"><i class="fas fa-map-marker-alt"></i> ${client.center || 'غير محدد'}</div>` : ''}
+                            </div>
+                        </div>
+                        <p><strong>العنوان:</strong> ${r.address}</p>
+                        <p><strong>الهاتف:</strong> ${r.clientPhone} <button class="call-btn" onclick="window.location.href='tel:${r.clientPhone}'"><i class="fas fa-phone"></i> اتصل</button></p>
+                        <div class="flex-buttons">
+                            <button id="accept_${r.id}" class="accept-btn"><i class="fas fa-check"></i> قبول الطلب</button>
+                            <button id="reject_${r.id}" class="reject-btn"><i class="fas fa-times"></i> رفض الطلب</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // الطلبات قيد التنفيذ
+        if (accepted.length) {
+            html += '<h3 class="section-title" style="color: #27ae60;">✅ طلبات قيد التنفيذ</h3>';
+            for (let r of accepted) {
+                const clientData = await db.ref('users/' + r.clientId).once('value');
+                const client = clientData.val();
+                html += `
+                    <div class="request-item">
+                        <div class="request-header">
+                            <div class="request-client-avatar" onclick="viewClientProfile('${r.clientId}')">
+                                ${client && client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            </div>
+                            <div>
+                                <span class="client-name" onclick="viewClientProfile('${r.clientId}')">${r.clientId}</span>
+                            </div>
+                        </div>
+                        <p><strong>العنوان:</strong> ${r.address}</p>
+                        <button id="complete_${r.id}" style="background: #27ae60;"><i class="fas fa-check-double"></i> تم الانتهاء من الخدمة</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // طلبات مكتملة (تختفي من القائمة بعد 5 دقائق ولكن تبقى في الإحصائيات)
+        if (completed.length) {
+            html += '<h3 class="section-title">📋 طلبات مكتملة (سيتم حذفها من القائمة خلال 5 دقائق)</h3>';
+            for (let r of completed) {
+                const clientData = await db.ref('users/' + r.clientId).once('value');
+                const client = clientData.val();
+                html += `
+                    <div class="request-item">
+                        <div class="request-header">
+                            <div class="request-client-avatar" onclick="viewClientProfile('${r.clientId}')">
+                                ${client && client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            </div>
+                            <div>
+                                <span class="client-name" onclick="viewClientProfile('${r.clientId}')">${r.clientId}</span>
+                            </div>
+                        </div>
+                        <p>✅ تم إنجاز الخدمة بنجاح</p>
+                        <div class="time-remaining">سيتم حذف الطلب من القائمة تلقائياً بعد ${Math.ceil((fiveMinutes - (now - r.completedAt)) / 60000)} دقيقة</div>
+                    </div>
+                `;
+            }
+        }
+        
+        // طلبات مرفوضة (تختفي من القائمة بعد 5 دقائق)
+        if (rejected.length) {
+            html += '<h3 class="section-title">❌ طلبات مرفوضة (سيتم حذفها من القائمة خلال 5 دقائق)</h3>';
+            for (let r of rejected) {
+                const clientData = await db.ref('users/' + r.clientId).once('value');
+                const client = clientData.val();
+                html += `
+                    <div class="request-item">
+                        <div class="request-header">
+                            <div class="request-client-avatar" onclick="viewClientProfile('${r.clientId}')">
+                                ${client && client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            </div>
+                            <div>
+                                <span class="client-name" onclick="viewClientProfile('${r.clientId}')">${r.clientId}</span>
+                            </div>
+                        </div>
+                        <p>❌ مرفوض</p>
+                        ${r.rejectReason ? `<div class="rejected-reason"><i class="fas fa-comment"></i> سبب الرفض: ${r.rejectReason}</div>` : ''}
+                        <div class="time-remaining">سيتم حذف الطلب من القائمة تلقائياً بعد ${Math.ceil((fiveMinutes - (now - r.rejectedAt)) / 60000)} دقيقة</div>
+                    </div>
+                `;
+            }
+        }
         
         container.innerHTML = html;
         
@@ -1610,7 +1827,7 @@
                 showConfirm('إتمام الخدمة', 'هل تم إتمام الخدمة بنجاح؟', async () => {
                     const completedAt = Date.now();
                     await db.ref('requests/' + r.id).update({ status: 'completed', completedAt: completedAt });
-                    showMessage('تم إنجاز الطلب بنجاح! سيتم حذفه بعد 5 دقائق');
+                    showMessage('تم إنجاز الطلب بنجاح! سيتم حذف الطلب من القائمة بعد 5 دقائق');
                     renderCraftsmanRequests();
                     updateNotificationCount();
                 });
@@ -1621,7 +1838,20 @@
     async function renderCraftsmanHome() {
         const snap = await db.ref('requests').once('value');
         let completed = 0;
-        snap.forEach(s => { if (s.val().craftsmanId === currentUser.username && s.val().status === 'completed') completed++; });
+        let rejected = 0;
+        let pending = 0;
+        let accepted = 0;
+        
+        snap.forEach(s => { 
+            const req = s.val();
+            if (req.craftsmanId === currentUser.username) {
+                if (req.status === 'completed') completed++;
+                else if (req.status === 'rejected') rejected++;
+                else if (req.status === 'pending') pending++;
+                else if (req.status === 'accepted') accepted++;
+            }
+        });
+        
         const latestComments = (currentUser.comments || []).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
         
         document.getElementById('appContent').innerHTML = `
@@ -1630,11 +1860,14 @@
                     <h3><i class="fas fa-map-marker-alt"></i> موقعك الحالي</h3>
                     <p><strong>المحافظة:</strong> ${currentUser.governorate || 'غير محدد'} | <strong>المركز:</strong> ${currentUser.center || 'غير محدد'}</p>
                 </div>
-                <h2 style="color: white;"><i class="fas fa-chart-line"></i> لوحة التحكم</h2>
+                <h2 style="color: white;"><i class="fas fa-chart-line"></i> لوحة التحكم والإحصائيات</h2>
                 <div class="cards-grid">
                     <div class="card"><div class="card-avatar">${currentUser.avatar ? `<img src="${currentUser.avatar}">` : '<i class="fas fa-star"></i>'}</div><h3>التقييم العام</h3><p style="font-size: 1.5rem;">⭐ ${currentUser.avgRating ? currentUser.avgRating.toFixed(1) : 'لا يوجد'}</p></div>
                     <div class="card"><div class="card-avatar"><i class="fas fa-users"></i></div><h3>عدد التقييمات</h3><p style="font-size: 1.5rem;">${currentUser.ratingCount || 0}</p></div>
-                    <div class="card"><div class="card-avatar"><i class="fas fa-check-circle"></i></div><h3>الطلبات المكتملة</h3><p style="font-size: 1.5rem;">${completed}</p></div>
+                    <div class="card"><div class="card-avatar"><i class="fas fa-check-circle"></i></div><h3>الطلبات المكتملة</h3><p style="font-size: 1.5rem; color: #27ae60;">${completed}</p></div>
+                    <div class="card"><div class="card-avatar"><i class="fas fa-times-circle"></i></div><h3>الطلبات المرفوضة</h3><p style="font-size: 1.5rem; color: #e74c3c;">${rejected}</p></div>
+                    <div class="card"><div class="card-avatar"><i class="fas fa-clock"></i></div><h3>قيد الانتظار</h3><p style="font-size: 1.5rem; color: #f39c12;">${pending}</p></div>
+                    <div class="card"><div class="card-avatar"><i class="fas fa-play-circle"></i></div><h3>قيد التنفيذ</h3><p style="font-size: 1.5rem; color: #3498db;">${accepted}</p></div>
                 </div>
                 <div class="profile-info"><h3><i class="fas fa-comment-dots"></i> أحدث التعليقات</h3>${latestComments.length === 0 ? '<p>لا توجد تعليقات بعد</p>' : latestComments.map(c => `<div class="comment-item"><div class="comment-header"><span class="comment-user"><i class="fas fa-user"></i> ${c.username}</span><span class="comment-rating">${'⭐'.repeat(c.rating)}</span></div><div class="comment-text">${c.comment || ''}</div></div>`).join('')}</div>
             </div>
