@@ -21,6 +21,7 @@
             --info-color: #2980b9;
             --card-shadow-prime: 0 10px 30px rgba(44, 62, 80, 0.05);
             --card-shadow-hover: 0 20px 40px rgba(243, 156, 18, 0.12);
+            --bottom-nav-height: 70px;
         }
 
         * {
@@ -35,9 +36,80 @@
             color: var(--text-dark);
             min-height: 100vh;
             overflow-x: hidden;
+            padding-bottom: var(--bottom-nav-height);
         }
 
-        /* Navbar Styling */
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: var(--bottom-nav-height);
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.06);
+            z-index: 1000;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: none; /* Hidden by default, shown on login */
+        }
+
+        .bottom-nav.visible {
+            display: flex;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            height: 100%;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+            transition: color 0.2s, transform 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .nav-item.active i {
+            transform: scale(1.1);
+        }
+
+        .nav-item .nav-badge {
+            position: absolute;
+            top: 4px;
+            right: 50%;
+            transform: translateX(140%);
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            min-width: 18px;
+            height: 18px;
+            padding: 2px 4px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
         .navbar {
             background: #ffffff;
             color: var(--text-dark);
@@ -84,7 +156,6 @@
             transform: translateY(-2px);
         }
 
-        /* Sidebar Styling */
         .sidebar {
             position: fixed;
             top: 0;
@@ -172,6 +243,7 @@
             width: 25px;
             font-size: 1.1rem;
             color: var(--text-muted);
+            transition: color 0.2s ease;
         }
 
         .sidebar a:hover {
@@ -218,14 +290,12 @@
             display: block;
         }
 
-        /* Layout Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 1.5rem 1rem;
         }
 
-        /* Cards Grid Layout */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -233,7 +303,6 @@
             margin-top: 1.5rem;
         }
 
-        /* الكروت المتطورة بالكامل */
         .card {
             background: #ffffff;
             border-radius: 20px;
@@ -378,7 +447,6 @@
             border: 1px solid rgba(41, 128, 185, 0.1);
         }
 
-        /* Profile & Detailed views styling */
         .profile-info {
             background: #ffffff;
             border-radius: 24px;
@@ -445,7 +513,6 @@
             color: var(--primary-color);
         }
 
-        /* Input Elements Design Fixes */
         .input-group {
             margin-bottom: 1.2rem;
             position: relative;
@@ -505,7 +572,6 @@
             box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
         }
 
-        /* WhatsApp Section Fixes */
         .whatsapp-wrapper {
             display: flex;
             gap: 10px;
@@ -538,7 +604,6 @@
             border-color: var(--accent-color);
         }
 
-        /* General Button Styling */
         button {
             background: var(--primary-color);
             color: white;
@@ -591,7 +656,6 @@
             flex-wrap: wrap;
         }
 
-        /* Review and Lists formatting */
         .review-section {
             background: #fcfcfc;
             border-radius: 16px;
@@ -627,7 +691,6 @@
             font-weight: 700;
         }
 
-        /* Auth Container Layout Fixes */
         .auth-wrapper {
             display: flex;
             justify-content: center;
@@ -646,7 +709,6 @@
             border: 1px solid #eaeaea;
         }
 
-        /* الموديلات والنوافذ المنبثقة المؤكدة في المنتصف تماماً */
         .modal {
             display: none;
             position: fixed;
@@ -685,7 +747,6 @@
             margin-top: 1.8rem;
         }
 
-        /* Notification Bell Icon Fixes */
         .notification-bell {
             position: relative;
             cursor: pointer;
@@ -726,7 +787,6 @@
             justify-content: center;
         }
 
-        /* تجميل الرسائل المنبثقة وجعلها مربعة في منتصف الشاشة */
         .sweet-message {
             position: fixed;
             top: 50%;
@@ -757,7 +817,6 @@
             line-height: 1.5;
         }
 
-        /* طبقة حماية خلفية ضبابية عند ظهور الرسالة */
         .sweet-overlay {
             position: fixed;
             top: 0;
@@ -778,7 +837,6 @@
             from { opacity: 0; } to { opacity: 1; }
         }
 
-        /* Miscellaneous Fixes */
         .location-group {
             background: #f8fafc;
             border-radius: 14px;
@@ -834,7 +892,6 @@
             color: var(--accent-color);
         }
 
-        /* تعديل مظهر صورة العميل للفني لتصبح عالمية واحترافية */
         .request-client-avatar {
             width: 50px;
             height: 50px;
@@ -982,6 +1039,24 @@
     </div>
 </div>
 <div class="overlay" id="overlay"></div>
+
+<!-- Bottom Navigation Bar -->
+<nav class="bottom-nav" id="bottomNav">
+    <div class="nav-item" data-page="home">
+        <i class="fas fa-home"></i>
+        <span>الرئيسية</span>
+    </div>
+    <div class="nav-item" data-page="requests">
+        <i class="fas fa-clipboard-list"></i>
+        <span id="bottomNavLabel">طلباتي</span>
+        <span class="nav-badge" id="bottomNavBadge" style="display: none;">0</span>
+    </div>
+    <div class="nav-item" data-page="profile">
+        <i class="fas fa-user"></i>
+        <span>ملفي</span>
+    </div>
+</nav>
+
 <div id="appContent"></div>
 
 <script>
@@ -1003,6 +1078,7 @@
     let selectedCraftsmanId = null;
     let notificationInterval = null;
     let cleanupInterval = null;
+    let navigationStack = []; // For back button management
 
     const countryCodes = [
         { code: "+20", country: "🇪🇬 مصر", name: "مصر" },
@@ -1011,9 +1087,9 @@
         { code: "+962", country: "🇯🇴 الأردن", name: "الأردن" },
         { code: "+961", country: "🇱🇧 لبنان", name: "لبنان" },
         { code: "+965", country: "🇰🇼 الكويت", name: "الكويت" },
-        { code: "+973", country: "🇧 Bahrain", name: "البحرين" },
-        { code: "+968", country: "🇴 Oman", name: "عمان" },
-        { code: "+974", country: "🇶 Qatar", name: "قطر" },
+        { code: "+973", country: "🇧🇭 البحرين", name: "البحرين" },
+        { code: "+968", country: "🇴🇲 عمان", name: "عمان" },
+        { code: "+974", country: "🇶🇦 قطر", name: "قطر" },
         { code: "+90", country: "🇹🇷 تركيا", name: "تركيا" },
         { code: "+1", country: "🇺🇸 الولايات المتحدة", name: "الولايات المتحدة" },
         { code: "+44", country: "🇬🇧 المملكة المتحدة", name: "المملكة المتحدة" },
@@ -1051,6 +1127,80 @@
         "كفر الشيخ": ["كفر الشيخ", "دسوق", "فوه", "مطوبس", "بيلا", "سيدي سالم", "الرياض", "قلين", "بلطيم", "الحامول"]
     };
 
+    // Navigation History Management
+    function pushToHistory(page, state) {
+        navigationStack.push({ page, state });
+        // Update browser history
+        history.pushState({ appPage: page, appState: state }, '', `#${page}`);
+    }
+
+    function popFromHistory() {
+        if (navigationStack.length > 1) {
+            navigationStack.pop(); // Remove current page
+            const prev = navigationStack[navigationStack.length - 1];
+            return prev;
+        }
+        return null;
+    }
+
+    // Back Button Handler
+    window.addEventListener('popstate', (event) => {
+        if (event.state && event.state.appPage) {
+            // We have a state, navigate to it without pushing again
+            navigationStack = navigationStack.filter((_, index) => index < navigationStack.findIndex(item => item.page === event.state.appPage) + 1);
+            handleNavigation(event.state.appPage, event.state.appState, false);
+        } else if (navigationStack.length > 1) {
+            // Browser back button pressed, go to previous page in our stack
+            popFromHistory();
+            const prev = navigationStack[navigationStack.length - 1];
+            handleNavigation(prev.page, prev.state, false);
+        }
+    });
+
+    function handleNavigation(page, state = null, push = true) {
+        if (!currentUser && page !== 'auth') {
+            showAuthScreen();
+            return;
+        }
+
+        // Update Bottom Navigation Active State
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+        const activeNavItem = document.querySelector(`.nav-item[data-page="${page}"]`);
+        if (activeNavItem) activeNavItem.classList.add('active');
+
+        switch (page) {
+            case 'home':
+                renderPage();
+                break;
+            case 'requests':
+                if (currentUser?.type === 'client') renderClientRequests();
+                else if (currentUser?.type === 'craftsman') renderCraftsmanRequests();
+                break;
+            case 'profile':
+                renderProfile();
+                break;
+            case 'viewCraftsman':
+                if (state?.craftId) window.viewCraftsman(state.craftId);
+                break;
+            case 'viewClient':
+                if (state?.clientId) window.viewClientProfile(state.clientId);
+                break;
+            case 'auth':
+                showAuthScreen();
+                break;
+            default:
+                renderPage();
+        }
+
+        if (push) {
+            pushToHistory(page, state);
+        }
+    }
+
+    function cleanupModal() {
+        document.querySelectorAll('.modal').forEach(m => m.remove());
+    }
+
     function showMessage(message, isError = false) {
         const existingMsg = document.querySelector('.sweet-message');
         const existingOverlay = document.querySelector('.sweet-overlay');
@@ -1070,10 +1220,11 @@
         document.body.appendChild(overlay);
         document.body.appendChild(msgDiv);
 
-        setTimeout(() => {
-            msgDiv.remove();
-            overlay.remove();
-        }, 2500);
+        const removeToast = () => { msgDiv.remove(); overlay.remove(); };
+        msgDiv.addEventListener('click', removeToast);
+        overlay.addEventListener('click', removeToast);
+
+        setTimeout(removeToast, 2500);
     }
 
     function showConfirm(title, message, onConfirm) {
@@ -1091,8 +1242,12 @@
             </div>
         `;
         document.body.appendChild(modal);
-        document.getElementById('confirmYes').onclick = () => { onConfirm(); modal.remove(); };
+        document.getElementById('confirmYes').onclick = () => { 
+            modal.remove(); 
+            onConfirm(); 
+        };
         document.getElementById('confirmNo').onclick = () => modal.remove();
+        window.addEventListener('popstate', () => modal.remove());
     }
 
     function openWhatsApp(phoneWithCode) {
@@ -1121,6 +1276,8 @@
             return;
         }
         
+        handleNavigation('viewClient', { clientId });
+        
         const allUsersSnap = await db.ref('users').once('value');
         const clientComments = [];
         allUsersSnap.forEach(userSnap => {
@@ -1143,11 +1300,11 @@
         
         document.getElementById('appContent').innerHTML = `
             <div class="container">
-                <button class="back-button" onclick="renderPage()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
+                <button class="back-button" onclick="history.back()"><i class="fas fa-arrow-right"></i> رجوع</button>
                 <div class="profile-info">
                     <div class="profile-header">
                         <div class="profile-avatar">
-                            ${client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            ${client.avatar ? `<img src="${client.avatar}" alt="صورة ${client.username}">` : '<i class="fas fa-user-circle"></i>'}
                         </div>
                         <div>
                             <h2>${client.username}</h2>
@@ -1242,16 +1399,17 @@
         }, 60000);
     }
 
-    // تعديل ذكي لدوال الحفظ: الجلسة النشطة فقط هي التي تمسح عند الخروج لمنع التداخل، مع الإبقاء على البيانات المخزنة للتذكر
     function saveSession(username, password, rememberMe = false) {
         if (rememberMe) {
             localStorage.setItem('rememberedUser', username);
             localStorage.setItem('rememberedPass', password);
             localStorage.setItem('rememberMeChecked', 'true');
         } else {
+            localStorage.removeItem('rememberedUser');
+            localStorage.removeItem('rememberedPass');
             localStorage.removeItem('rememberMeChecked');
         }
-        localStorage.setItem('hasActiveSession', 'true'); 
+        localStorage.setItem('hasActiveSession', 'true');
     }
     
     function clearActiveSessionOnly() {
@@ -1284,7 +1442,8 @@
                 saveSession(username, password, rememberMe);
                 
                 updateUI();
-                renderPage();
+                navigationStack = [];
+                handleNavigation('home', null, true);
                 startNotifications();
                 startCleanupInterval();
                 showMessage(`مرحباً ${username}! تم تسجيل الدخول بنجاح`);
@@ -1341,7 +1500,8 @@
         currentUser = { username: username, ...userData };
         currentUserType = type;
         updateUI();
-        renderPage();
+        navigationStack = [];
+        handleNavigation('home', null, true);
         startNotifications();
         startCleanupInterval();
         showMessage(`تم إنشاء الحساب بنجاح! مرحباً ${username}`);
@@ -1351,27 +1511,45 @@
     async function logout() {
         if (notificationInterval) clearInterval(notificationInterval);
         if (cleanupInterval) clearInterval(cleanupInterval);
-        clearActiveSessionOnly(); 
+        clearActiveSessionOnly();
         currentUser = null;
         currentUserType = null;
         updateUI();
-        showAuthScreen();
+        navigationStack = [];
+        handleNavigation('auth', null, true);
         closeSidebar();
     }
 
     function updateUI() {
         const menuBtn = document.getElementById('menuBtn');
+        const bottomNav = document.getElementById('bottomNav');
+        const sideUserType = document.getElementById('sidebarUserType');
+        const sideUsername = document.getElementById('sidebarUsername');
+        const avatarDiv = document.getElementById('sidebarAvatar');
+        const notifBell = document.getElementById('notificationBell');
+        
         if (currentUser) {
-            document.getElementById('sidebarUsername').innerText = currentUser.username;
-            document.getElementById('sidebarUserType').innerText = currentUser.type === 'client' ? 'عميل' : 'صاحب مهنة';
-            const avatarDiv = document.getElementById('sidebarAvatar');
-            if (currentUser.avatar) avatarDiv.innerHTML = `<img src="${currentUser.avatar}">`;
-            else avatarDiv.innerHTML = '<i class="fas fa-user-circle"></i>';
-            document.getElementById('notificationBell').style.display = currentUser.type === 'craftsman' ? 'flex' : 'none';
-            if (menuBtn) menuBtn.style.display = 'flex'; 
+            sideUsername.innerText = currentUser.username;
+            sideUserType.innerText = currentUser.type === 'client' ? 'عميل' : 'صاحب مهنة';
+            avatarDiv.innerHTML = currentUser.avatar ? `<img src="${currentUser.avatar}" alt="Avatar">` : '<i class="fas fa-user-circle"></i>';
+            notifBell.style.display = currentUser.type === 'craftsman' ? 'flex' : 'none';
+            if (menuBtn) menuBtn.style.display = 'flex';
+            if (bottomNav) bottomNav.classList.add('visible');
+            
+            // Update bottom nav label and badge visibility based on user type
+            const bottomNavLabel = document.getElementById('bottomNavLabel');
+            const bottomNavBadge = document.getElementById('bottomNavBadge');
+            if (currentUser.type === 'craftsman') {
+                if (bottomNavLabel) bottomNavLabel.textContent = 'الطلبات الجديدة';
+                updateNotificationCount();
+            } else {
+                if (bottomNavLabel) bottomNavLabel.textContent = 'طلباتي';
+                if (bottomNavBadge) bottomNavBadge.style.display = 'none';
+            }
         } else {
-            document.getElementById('notificationBell').style.display = 'none';
-            if (menuBtn) menuBtn.style.display = 'none'; 
+            if (menuBtn) menuBtn.style.display = 'none';
+            notifBell.style.display = 'none';
+            if (bottomNav) bottomNav.classList.remove('visible');
         }
     }
 
@@ -1381,20 +1559,26 @@
         let count = 0;
         snap.forEach(s => { if (s.val().craftsmanId === currentUser.username && s.val().status === 'pending') count++; });
         document.getElementById('notificationCount').innerText = count;
+        
+        const bottomNavBadge = document.getElementById('bottomNavBadge');
+        if (bottomNavBadge) {
+            bottomNavBadge.textContent = count;
+            bottomNavBadge.style.display = count > 0 ? 'flex' : 'none';
+        }
     }
 
     function startNotifications() {
         if (notificationInterval) clearInterval(notificationInterval);
         if (currentUser && currentUser.type === 'craftsman') {
             updateNotificationCount();
-            notificationInterval = setInterval(updateNotificationCount, 3000);
+            notificationInterval = setInterval(updateNotificationCount, 5000); // Slightly increased interval for performance
         }
     }
 
     function showAuthScreen() {
         closeSidebar();
-        const menuBtn = document.getElementById('menuBtn');
-        if (menuBtn) menuBtn.style.display = 'none';
+        document.getElementById('menuBtn').style.display = 'none';
+        document.getElementById('bottomNav').classList.remove('visible');
 
         document.getElementById('appContent').innerHTML = `
             <div class="auth-wrapper">
@@ -1412,8 +1596,8 @@
 
     function renderAuthForm(type) {
         const governorateOptions = Object.keys(egyptGovernorates).map(g => `<option value="${g}">${g}</option>`).join('');
-        const menuBtn = document.getElementById('menuBtn');
-        if (menuBtn) menuBtn.style.display = 'none'; 
+        document.getElementById('menuBtn').style.display = 'none';
+        document.getElementById('bottomNav').classList.remove('visible');
         
         if (type === 'login') {
             const savedSession = getSavedSession();
@@ -1537,10 +1721,10 @@
 
     function renderPage() {
         if (!currentUser) {
-            showAuthScreen();
+            handleNavigation('auth', null, true);
         } else {
-            const menuBtn = document.getElementById('menuBtn');
-            if (menuBtn) menuBtn.style.display = 'flex';
+            document.getElementById('menuBtn').style.display = 'flex';
+            document.getElementById('bottomNav').classList.add('visible');
             
             if (currentUser.type === 'client') {
                 renderClientHome();
@@ -1592,10 +1776,10 @@
             return;
         }
         grid.innerHTML = list.map(c => `
-            <div class="card" onclick="viewCraftsman('${c.username}')">
+            <div class="card" onclick="handleNavigation('viewCraftsman', { craftId: '${c.username}' }, true)">
                 <div>
                     <div class="card-avatar">
-                        ${c.avatar ? `<img src="${c.avatar}">` : '<i class="fas fa-user-cog"></i>'}
+                        ${c.avatar ? `<img src="${c.avatar}" alt="${c.username}" loading="lazy">` : '<i class="fas fa-user-cog"></i>'}
                         <div class="status-dot"></div>
                     </div>
                     <h3>${c.username}</h3>
@@ -1612,6 +1796,9 @@
         const snap = await db.ref('users/' + craftId).once('value');
         const craft = snap.val();
         if (!craft) return;
+        
+        handleNavigation('viewCraftsman', { craftId });
+        
         const comments = (craft.comments || []).sort((a, b) => new Date(b.date) - new Date(a.date));
         const whatsappDisplay = craft.whatsapp ? `${craft.whatsappCode || ''} ${craft.whatsappNumber || ''}` : craft.whatsapp || craft.phone;
         
@@ -1624,10 +1811,10 @@
 
         document.getElementById('appContent').innerHTML = `
             <div class="container">
-                <button class="back-button" onclick="renderPage()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
+                <button class="back-button" onclick="history.back()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
                 <div class="profile-info">
                     <div class="profile-header">
-                        <div class="profile-avatar">${craft.avatar ? `<img src="${craft.avatar}">` : '<i class="fas fa-user-cog"></i>'}</div>
+                        <div class="profile-avatar">${craft.avatar ? `<img src="${craft.avatar}" alt="${craft.username}" loading="lazy">` : '<i class="fas fa-user-cog"></i>'}</div>
                         <div>
                             <h2>${craft.username}</h2>
                             <p class="rating">⭐ ${craft.avgRating ? craft.avgRating.toFixed(1) : 'لا يوجد تقييمات'} (${craft.ratingCount || 0})</p>
@@ -1701,7 +1888,7 @@
                 comments: [...(craft.comments||[]), { username: currentUser.username, rating, comment, date: new Date().toISOString() }]
             });
             showMessage('شكراً لتقييمك! تم إضافة تعليقك بنجاح');
-            viewCraftsman(craftId);
+            window.viewCraftsman(craftId);
         };
     };
 
@@ -1711,10 +1898,10 @@
         
         document.getElementById('appContent').innerHTML = `
             <div class="container">
-                <button class="back-button" onclick="renderPage()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
+                <button class="back-button" onclick="history.back()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
                 <div class="profile-info">
                     <div class="profile-header">
-                        <div class="profile-avatar" id="avatarClick">${currentUser.avatar ? `<img src="${currentUser.avatar}">` : '<i class="fas fa-user-circle"></i>'}<div class="avatar-overlay"><i class="fas fa-camera"></i></div></div>
+                        <div class="profile-avatar" id="avatarClick">${currentUser.avatar ? `<img src="${currentUser.avatar}" alt="Avatar">` : '<i class="fas fa-user-circle"></i>'}<div class="avatar-overlay"><i class="fas fa-camera"></i></div></div>
                         <div><h2>${currentUser.username}</h2><p style="color:var(--text-muted); font-size:0.9rem;">نوع الحساب: ${currentUser.type === 'client' ? 'عميل' : 'صاحب حرفة ومهنة'}</p></div>
                     </div>
                     <div id="profileForm">
@@ -1836,7 +2023,7 @@
                 reader.onload = (ev) => {
                     selectedBase64 = ev.target.result;
                     const preview = document.getElementById('previewContainer');
-                    preview.innerHTML = `<img src="${selectedBase64}" style="width:100%;height:100%;object-fit:cover;">`;
+                    preview.innerHTML = `<img src="${selectedBase64}" style="width:100%;height:100%;object-fit:cover;" alt="Preview">`;
                 };
                 reader.readAsDataURL(file);
             }
@@ -1859,7 +2046,7 @@
         const requests = [];
         snap.forEach(s => { if (s.val().clientId === currentUser.username) requests.push({ id: s.key, ...s.val() }); });
         document.getElementById('appContent').innerHTML = `
-            <div class="container"><button class="back-button" onclick="renderPage()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
+            <div class="container"><button class="back-button" onclick="history.back()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
             <h2 style="color: var(--text-dark); font-size:1.3rem; font-weight:800; margin-bottom:10px;"><i class="fas fa-clipboard-list"></i> أرشيف طلباتي المفتوحة والسابقة</h2><div id="reqList" class="profile-info"></div></div>`;
         const container = document.getElementById('reqList');
         if (requests.length === 0) { container.innerHTML = '<p style="text-align: center; color:var(--text-muted); padding:1rem;">لا توجد أي طلبات مرسلة حالياً</p>'; return; }
@@ -1891,7 +2078,7 @@
         const requests = [];
         snap.forEach(s => { if (s.val().craftsmanId === currentUser.username) requests.push({ id: s.key, ...s.val() }); });
         document.getElementById('appContent').innerHTML = `
-            <div class="container"><button class="back-button" onclick="renderPage()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
+            <div class="container"><button class="back-button" onclick="history.back()"><i class="fas fa-arrow-right"></i> رجوع للرئيسية</button>
             <h2 style="color: var(--text-dark); font-size:1.3rem; font-weight:800; margin-bottom:10px;"><i class="fas fa-inbox"></i> لوحة الطلبات الواردة من العملاء</h2><div id="reqList" class="profile-info"></div></div>`;
         const container = document.getElementById('reqList');
         if (requests.length === 0) { container.innerHTML = '<p style="text-align: center; color:var(--text-muted); padding:1rem;">لا توجد لديك طلبات خدمة واردة حالياً</p>'; return; }
@@ -1914,11 +2101,11 @@
                 html += `
                     <div class="request-item">
                         <div class="request-header">
-                            <div class="request-client-avatar" onclick="viewClientProfile('${r.clientId}')">
-                                ${client && client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            <div class="request-client-avatar" onclick="window.viewClientProfile('${r.clientId}')">
+                                ${client && client.avatar ? `<img src="${client.avatar}" alt="${r.clientId}" loading="lazy">` : '<i class="fas fa-user-circle"></i>'}
                             </div>
                             <div>
-                                <span class="client-name" onclick="viewClientProfile('${r.clientId}')">${r.clientId}</span>
+                                <span class="client-name" onclick="window.viewClientProfile('${r.clientId}')">${r.clientId}</span>
                                 ${client ? `<div class="location-badge" style="margin-top: 4px;"><i class="fas fa-map-marker-alt"></i> مركز العميل: ${client.center || 'غير محدد'}</div>` : ''}
                             </div>
                         </div>
@@ -1941,11 +2128,11 @@
                 html += `
                     <div class="request-item">
                         <div class="request-header">
-                            <div class="request-client-avatar" onclick="viewClientProfile('${r.clientId}')">
-                                ${client && client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            <div class="request-client-avatar" onclick="window.viewClientProfile('${r.clientId}')">
+                                ${client && client.avatar ? `<img src="${client.avatar}" alt="${r.clientId}" loading="lazy">` : '<i class="fas fa-user-circle"></i>'}
                             </div>
                             <div>
-                                <span class="client-name" onclick="viewClientProfile('${r.clientId}')">${r.clientId}</span>
+                                <span class="client-name" onclick="window.viewClientProfile('${r.clientId}')">${r.clientId}</span>
                             </div>
                         </div>
                         <p style="font-size:0.95rem; margin-bottom:4px;"><strong>العنوان المتفق عليه:</strong> ${r.address}</p>
@@ -1964,11 +2151,11 @@
                 html += `
                     <div class="request-item" style="opacity: 0.85;">
                         <div class="request-header">
-                            <div class="request-client-avatar" onclick="viewClientProfile('${r.clientId}')">
-                                ${client && client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            <div class="request-client-avatar" onclick="window.viewClientProfile('${r.clientId}')">
+                                ${client && client.avatar ? `<img src="${client.avatar}" alt="${r.clientId}" loading="lazy">` : '<i class="fas fa-user-circle"></i>'}
                             </div>
                             <div>
-                                <span class="client-name" onclick="viewClientProfile('${r.clientId}')">${r.clientId}</span>
+                                <span class="client-name" onclick="window.viewClientProfile('${r.clientId}')">${r.clientId}</span>
                             </div>
                         </div>
                         <p style="color:var(--success-color); font-weight:600;"><i class="fas fa-check-circle"></i> تم إنجاز وتسليم الخدمة بنجاح</p>
@@ -1986,11 +2173,11 @@
                 html += `
                     <div class="request-item" style="opacity: 0.85;">
                         <div class="request-header">
-                            <div class="request-client-avatar" onclick="viewClientProfile('${r.clientId}')">
-                                ${client && client.avatar ? `<img src="${client.avatar}">` : '<i class="fas fa-user-circle"></i>'}
+                            <div class="request-client-avatar" onclick="window.viewClientProfile('${r.clientId}')">
+                                ${client && client.avatar ? `<img src="${client.avatar}" alt="${r.clientId}" loading="lazy">` : '<i class="fas fa-user-circle"></i>'}
                             </div>
                             <div>
-                                <span class="client-name" onclick="viewClientProfile('${r.clientId}')">${r.clientId}</span>
+                                <span class="client-name" onclick="window.viewClientProfile('${r.clientId}')">${r.clientId}</span>
                             </div>
                         </div>
                         <p style="color:var(--danger-color);">❌ تم الرفض والاعتذار عن العمل</p>
@@ -2081,6 +2268,7 @@
     }
 
     function openRequestModal() {
+        cleanupModal();
         const modal = document.createElement('div');
         modal.className = 'modal';
         modal.style.display = 'flex';
@@ -2112,9 +2300,11 @@
             modal.remove();
         };
         document.getElementById('cancelReqBtn').onclick = () => modal.remove();
+        window.addEventListener('popstate', () => modal.remove());
     }
 
     function openRatingModal(requestId, craftsmanId) {
+        cleanupModal();
         const modal = document.createElement('div');
         modal.className = 'modal';
         modal.style.display = 'flex';
@@ -2150,9 +2340,11 @@
             renderClientRequests();
         };
         document.getElementById('cancelRateBtn').onclick = () => modal.remove();
+        window.addEventListener('popstate', () => modal.remove());
     }
 
     function openRejectModal(requestId) {
+        cleanupModal();
         const modal = document.createElement('div');
         modal.className = 'modal';
         modal.style.display = 'flex';
@@ -2175,6 +2367,7 @@
             updateNotificationCount();
         };
         document.getElementById('cancelRejectBtn').onclick = () => modal.remove();
+        window.addEventListener('popstate', () => modal.remove());
     }
 
     function closeSidebar() { 
@@ -2189,27 +2382,34 @@
         } 
     }
     
-    window.goToHome = () => { renderPage(); closeSidebar(); };
+    window.goToHome = () => { handleNavigation('home', null, true); closeSidebar(); };
     
     document.getElementById('menuBtn').onclick = openSidebar;
     document.getElementById('closeSidebar').onclick = closeSidebar;
     document.getElementById('overlay').onclick = closeSidebar;
-    document.getElementById('notificationBell').onclick = () => { closeSidebar(); if (currentUser?.type === 'craftsman') renderCraftsmanRequests(); };
-    document.getElementById('sideHome').onclick = (e) => { e.preventDefault(); closeSidebar(); renderPage(); };
-    document.getElementById('sideProfile').onclick = (e) => { e.preventDefault(); closeSidebar(); renderProfile(); };
+    document.getElementById('notificationBell').onclick = () => { closeSidebar(); handleNavigation('requests', null, true); };
+    document.getElementById('sideHome').onclick = (e) => { e.preventDefault(); closeSidebar(); handleNavigation('home', null, true); };
+    document.getElementById('sideProfile').onclick = (e) => { e.preventDefault(); closeSidebar(); handleNavigation('profile', null, true); };
     document.getElementById('sideRequests').onclick = (e) => {
-        e.preventDefault(); closeSidebar();
-        if (currentUser?.type === 'client') renderClientRequests();
-        else if (currentUser?.type === 'craftsman') renderCraftsmanRequests();
+        e.preventDefault(); closeSidebar(); handleNavigation('requests', null, true);
     };
     document.getElementById('sideLogout').onclick = (e) => { e.preventDefault(); closeSidebar(); logout(); };
 
-    // فحص تشغيل فوري للجلسات الفعالة، أو تعبئة البيانات إن كانت محفوظة
+    // Bottom Navigation Event Listeners
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const page = this.getAttribute('data-page');
+            handleNavigation(page, null, true);
+        });
+    });
+
+    // Check for active session on load
     const saved = getSavedSession();
     if(saved.username && saved.password && saved.hasActiveSession === 'true') {
         loginUser(saved.username, saved.password, saved.rememberMeChecked === 'true');
     } else {
-        showAuthScreen();
+        handleNavigation('auth', null, true);
     }
 </script>
 </body>
