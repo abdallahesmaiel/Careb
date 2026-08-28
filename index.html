@@ -1541,7 +1541,7 @@ showAuthScreen();
                 const remember=document.getElementById('rememberMeCheckbox').checked;
                 if(!username || !password){showMessage('يرجى إدخال اسم المستخدم وكلمة السر',true);return;}
                 const btn=document.getElementById('doLoginBtn');
-                btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> جارٍ التحقق من Firebase...';
+                btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>جارٍ التحقق من الببانات';
                 try{
                     await window.loginUser(username,password,remember);
                 }finally{
