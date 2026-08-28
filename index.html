@@ -387,9 +387,9 @@
         .notification-bell i { font-size: 1.2rem; color: var(--primary-color); }
         .notification-bell:hover { background: #e4e8ed; }
         .notification-badge { position: absolute; top: -5px; left: -5px; background: var(--danger-color); color: white; border-radius: 50%; min-width: 18px; height: 18px; padding: 2px; font-size: 0.65rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-        .sweet-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; border-radius: 24px; padding: 2rem; text-align: center; z-index: 2000; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); border: 1px solid rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; width: 90%; max-width: 320px; aspect-ratio: 1 / 1; animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .sweet-message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ffffff; border-radius: 24px; padding: 2rem; text-align: center; z-index: 5000; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); border: 1px solid rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; width: 90%; max-width: 320px; aspect-ratio: 1 / 1; animation: toastIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .sweet-message p { font-size: 1.05rem; font-weight: 700; color: var(--text-dark); line-height: 1.5; }
-        .sweet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); z-index: 1999; animation: fadeIn 0.3s ease; }
+        .sweet-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); z-index: 4999; animation: fadeIn 0.3s ease; }
         @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -40%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
         .location-group { background: #f8fafc; border-radius: 14px; padding: 14px; margin-bottom: 1.2rem; border: 1px solid #eef2f6; }
         .location-group label { display: block; margin-bottom: 6px; color: var(--text-dark); font-weight: 600; font-size: 0.85rem; }
@@ -1138,7 +1138,7 @@ function openRequestModal() {
     modal.querySelector('#sendReqBtn').onclick=async()=>{
       const b=modal.querySelector('#sendReqBtn'); if(b.disabled)return;
       const reason=modal.querySelector('#reqReason').value.trim(), address=modal.querySelector('#reqAddress').value.trim(), phone=modal.querySelector('#reqPhone').value.trim();
-      if(!reason){showMessage('اكتب سبب طلب الخدمة بالتفصيل حتى يفهم الحرفي المشكلة.',true);return;}
+      if(!reason){}
       if(!address||!phone){showMessage('أكمل العنوان ورقم الهاتف أولاً.',true);return;}
       setButtonLoading(b,true);
       try{
@@ -1457,7 +1457,7 @@ showAuthScreen();
             return;
         }
         el.disabled=true;
-        el.innerHTML='<option value="">جاري تحميل المناطق والقرى...</option>';
+        el.innerHTML='<option value="">جارٍ تجهيز الخيارات...</option>';
         try{
             const areas=await loadAreas(governorate,center);
             el.innerHTML='<option value="">اختر القرية / المنطقة</option>' +
@@ -1467,7 +1467,7 @@ showAuthScreen();
         }catch(e){
             el.innerHTML='<option value="">تعذر تحميل المناطق والقرى</option>';
             el.disabled=false;
-            showMessage('تعذر تحميل المناطق والقرى من قاعدة البيانات',true);
+            showMessage('تعذر تحميل المناطق والقرى، حاول مرة أخرى',true);
         }
     }
 
@@ -1476,7 +1476,7 @@ showAuthScreen();
             <label><i class="fas fa-map-marker-alt"></i> القرية / المنطقة</label>
             <div class="location-add-row">
                 <select id="${prefix}Area" class="location-select" disabled>
-                    <option value="">جاري تحميل المناطق والقرى...</option>
+                    <option value="">جارٍ تجهيز الخيارات...</option>
                 </select>
                 <button type="button" class="add-location-btn" id="${prefix}AddArea">
                     <i class="fas fa-plus"></i> إضافة
@@ -1491,7 +1491,7 @@ showAuthScreen();
     async function askTextModal(title,placeholder){
     return await new Promise(resolve=>{
         const modal=document.createElement('div');modal.className='modal';modal.style.display='flex';
-        modal.innerHTML=`<div class="modal-content"><h3 style="font-weight:800;margin-bottom:10px"><i class="fas fa-map-marker-alt" style="color:var(--accent-color)"></i> ${esc(title)}</h3><p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">سيتم حفظ الاسم في Firebase ليظهر لك وللمستخدمين لاحقاً.</p><input id="v12TextValue" class="location-select" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:12px" placeholder="${esc(placeholder)}"><div class="modal-buttons"><button id="v12TextOk" class="accept-btn"><i class="fas fa-check"></i> حفظ</button><button id="v12TextCancel" class="reject-btn"><i class="fas fa-times"></i> إلغاء</button></div></div>`;
+        modal.innerHTML=`<div class="modal-content"><h3 style="font-weight:800;margin-bottom:10px"><i class="fas fa-map-marker-alt" style="color:var(--accent-color)"></i> ${esc(title)}</h3><p style="font-size:.82rem;color:var(--text-muted);margin-bottom:12px">سيتم حفظ الاسم ليظهر لك وللمستخدمين لاحقاً.</p><input id="v12TextValue" class="location-select" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:12px" placeholder="${esc(placeholder)}"><div class="modal-buttons"><button id="v12TextOk" class="accept-btn"><i class="fas fa-check"></i> حفظ</button><button id="v12TextCancel" class="reject-btn"><i class="fas fa-times"></i> إلغاء</button></div></div>`;
         document.body.appendChild(modal);const input=modal.querySelector('#v12TextValue');input.focus();
         const done=v=>{modal.remove();resolve(v)};modal.querySelector('#v12TextOk').onclick=()=>{const v=input.value.trim();if(!v){showMessage('اكتب اسم القرية أو المنطقة أولاً',true);return;}done(v)};modal.querySelector('#v12TextCancel').onclick=()=>done('');input.onkeydown=e=>{if(e.key==='Enter')modal.querySelector('#v12TextOk').click();if(e.key==='Escape')done('')};
     });
@@ -1541,7 +1541,7 @@ showAuthScreen();
                 const remember=document.getElementById('rememberMeCheckbox').checked;
                 if(!username || !password){showMessage('يرجى إدخال اسم المستخدم وكلمة السر',true);return;}
                 const btn=document.getElementById('doLoginBtn');
-                btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i>جارٍ التحقق من الببانات';
+                btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> جارٍ تسجيل الدخول...';
                 try{
                     await window.loginUser(username,password,remember);
                 }finally{
@@ -1621,7 +1621,7 @@ showAuthScreen();
                 await saveNewArea(g,c,area.trim());
                 await populateAreaSelect('regArea',g,c,area.trim());
                 showMessage('تمت إضافة القرية/المنطقة ويمكنك اختيارها الآن');
-            }catch(e){showMessage('تعذر حفظ المنطقة الجديدة في Firebase',true);}
+            }catch(e){showMessage('تعذر حفظ المنطقة الجديدة، حاول مرة أخرى',true);}
         };
 
         const typeSelect=document.getElementById('regType');
@@ -1666,7 +1666,7 @@ showAuthScreen();
     window.loginUser = async function(username,password,rememberMe=false){
         try{
             const snap=await db.ref('users').orderByChild('username').equalTo(username).once('value');
-            if(!snap.exists()){showMessage('اسم المستخدم غير موجود في قاعدة بيانات Firebase',true);return false;}
+            if(!snap.exists()){showMessage('اسم المستخدم غير موجود',true);return false;}
             let userData=null,userKey=null;
             snap.forEach(ch=>{userData=ch.val();userKey=ch.key;});
             if(!userData || String(userData.password??'')!==String(password)){
@@ -1687,7 +1687,7 @@ showAuthScreen();
             return true;
         }catch(e){
             console.error(e);
-            showMessage('تعذر الاتصال بقاعدة بيانات Firebase. تحقق من الاتصال وقواعد قاعدة البيانات.',true);
+            showMessage('تعذر الاتصال حالياً. تحقق من الاتصال وحاول مرة أخرى.',true);
             return false;
         }
     };
@@ -1724,10 +1724,10 @@ showAuthScreen();
     window.renderProfile = async function(){
         if(!currentUser) return showAuthScreen();
         const root=document.getElementById('appContent');
-        root.innerHTML='<div class="container"><div class="profile-info"><div class="loading-inline"><i class="fas fa-spinner"></i> جاري تحميل بيانات الملف الشخصي...</div></div></div>';
+        root.innerHTML='<div class="container"><div class="profile-info"><div class="loading-inline"><i class="fas fa-spinner"></i> جارٍ تجهيز الملف الشخصي...</div></div></div>';
         try{
             const fresh=await getFreshCurrentUser();
-            if(!fresh){showMessage('لم يتم العثور على بيانات الحساب في Firebase',true);return showAuthScreen();}
+            if(!fresh){showMessage('لم يتم العثور على بيانات الحساب',true);return showAuthScreen();}
             const countryOptions=countryCodes.map(c=>`<option value="${esc(c.code)}" ${fresh.whatsappCode===c.code?'selected':''}>${esc(c.country)} ${esc(c.code)}</option>`).join('');
             const governorateOptions=Object.keys(egyptGovernorates).map(g=>`<option value="${esc(g)}" ${norm(fresh.governorate)===norm(g)?'selected':''}>${esc(g)}</option>`).join('');
 
@@ -1808,7 +1808,7 @@ showAuthScreen();
                     await saveNewArea(g,c,area.trim());
                     await populateAreaSelect('editArea',g,c,area.trim());
                     showMessage('تمت إضافة المنطقة الجديدة');
-                }catch(e){showMessage('تعذر حفظ المنطقة الجديدة في Firebase',true);}
+                }catch(e){showMessage('تعذر حفظ المنطقة الجديدة، حاول مرة أخرى',true);}
             };
 
             document.getElementById('profileBack').onclick=()=>renderPage();
@@ -1889,7 +1889,7 @@ showAuthScreen();
             };
         }catch(e){
             console.error(e);
-            showMessage('تعذر تحميل بيانات الملف الشخصي من Firebase',true);
+            showMessage('تعذر تحميل بيانات الملف الشخصي، حاول مرة أخرى',true);
         }
     };
 
@@ -1920,7 +1920,7 @@ showAuthScreen();
           <div class="input-group" style="background:white;border-radius:12px;border:1px solid #dcdcdc;display:flex;align-items:center">
             <i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="ابحث بالاسم أو المهنة المطلوبة..." style="border:none;background:transparent">
           </div>
-          <div id="craftsmenGrid" class="cards-grid"><div class="loading-inline"><i class="fas fa-spinner"></i> جاري تحميل الحرفيين...</div></div>
+          <div id="craftsmenGrid" class="cards-grid"><div class="loading-inline"><i class="fas fa-spinner"></i> جارٍ تجهيز الحرفيين...</div></div>
         </div>`;
         try{
             const list=await window.getAllCraftsmenByCenter(c);
@@ -1933,7 +1933,7 @@ showAuthScreen();
         }catch(e){
             console.error(e);
             const grid=document.getElementById('craftsmenGrid');
-            if(grid) grid.innerHTML='<p style="color:var(--danger-color);text-align:center;grid-column:1/-1;padding:2rem">تعذر تحميل الحرفيين من Firebase</p>';
+            if(grid) grid.innerHTML='<p style="color:var(--danger-color);text-align:center;grid-column:1/-1;padding:2rem">تعذر تحميل الحرفيين، حاول مرة أخرى</p>';
         }
     };
 
@@ -1967,7 +1967,7 @@ showAuthScreen();
     window.renderFavorites = async function(){
         if(!currentUser) return showAuthScreen();
         const root=document.getElementById('appContent');
-        root.innerHTML='<div class="container"><div class="profile-info"><div class="loading-inline"><i class="fas fa-spinner"></i> جاري تحميل المفضلة...</div></div></div>';
+        root.innerHTML='<div class="container"><div class="profile-info"><div class="loading-inline"><i class="fas fa-spinner"></i> جارٍ تجهيز المفضلة...</div></div></div>';
         try{
             await loadFavorites();
             const users=await loadUsersFast(false);
@@ -1984,7 +1984,7 @@ showAuthScreen();
             }
             displayCraftsmen(list,true);
         }catch(e){
-            console.error(e);showMessage('تعذر تحميل المفضلة من Firebase',true);
+            console.error(e);showMessage('تعذر تحميل المفضلة، حاول مرة أخرى',true);
         }
     };
 
